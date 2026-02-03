@@ -1,5 +1,20 @@
 export type ViewState = 'monitor' | 'holdings' | 'settings';
 
+export interface TradingAccount {
+    id: string;
+    name: string;                   // 账户名称，如 "华泰证券"
+    broker: string;                 // 券商名称
+    accountNumber: string;          // 账户号码（脱敏显示）
+    fees: {
+        purchase: number;           // 申购费率 %
+        redeem: number;             // 赎回费率 %
+        trading: number;            // 交易佣金 %
+    };
+    isDefault: boolean;             // 是否默认账户
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface StockData {
     id: string;
     code: string;
@@ -41,21 +56,33 @@ export interface HoldingData {
     id: string;
     name: string;
     code: string;
-    type: string; // e.g., "T+2 Arbitrage"
-    status: 'Waiting Confirm' | 'Ready' | 'Locked';
+    exchange: 'SZ' | 'SH';
+    type: string; // e.g., "T+2 套利周期"
+    status: 'pending' | 'ready' | 'locked' | 'completed';
     statusText: string;
-    statusColor: 'warning' | 'success' | 'slate'; // mapped to colors
+    statusColor: 'warning' | 'success' | 'slate' | 'blue';
     progress: number;
-    purchaseDate: string;
-    estimatedSellDate?: string;
-    price: number;
-    cost: number;
-    feeText?: string;
-    feeAmount?: number;
-    unrealizedProfit: number;
-    unrealizedProfitPercent: number;
-    floatingProfit?: number;
-    floatingProfitPercent?: number;
-    isRealized?: boolean;
-    canRedeem?: boolean;
+    purchaseDate: string;           // 申购日期
+    purchasePrice: number;          // 申购价格（IOPV）
+    shares: number;                 // 份额
+    cost: number;                   // 成本价（含费用）
+    currentPrice: number;           // 当前净值
+    estimatedSellDate?: string;     // 预计可卖日期
+    actualSellDate?: string;        // 实际卖出日期
+    sellPrice?: number;             // 卖出价格
+    fees: {
+        purchase: number;           // 申购费
+        redeem: number;             // 赎回费
+        trading: number;            // 交易佣金
+        total: number;              // 总费用
+    };
+    transferDays: number;           // 转托管天数
+    unrealizedProfit: number;       // 未实现盈亏
+    unrealizedProfitPercent: number; // 未实现盈亏百分比
+    realizedProfit?: number;        // 已实现盈亏
+    realizedProfitPercent?: number; // 已实现盈亏百分比
+    canRedeem: boolean;             // 是否可赎回
+    notes?: string;                 // 备注
+    createdAt: string;              // 创建时间
+    updatedAt: string;              // 更新时间
 }

@@ -185,3 +185,27 @@ export const fetchAllLofList = async (useCache: boolean = true): Promise<JisiluR
     }
   }
 };
+
+/**
+ * 根据基金代码查询基金信息
+ */
+export const fetchLofByCode = async (code: string): Promise<JisiluLofItem | null> => {
+  try {
+    // 先尝试从缓存中获取所有数据
+    const allData = await fetchAllLofList(true);
+
+    // 在所有数据中查找匹配的基金代码
+    const found = allData.rows.find(item => item.cell.fund_id === code);
+
+    if (found) {
+      console.log('Found LOF by code:', code, found);
+      return found;
+    }
+
+    console.warn('LOF not found by code:', code);
+    return null;
+  } catch (error) {
+    console.error('Failed to fetch LOF by code:', error);
+    throw error;
+  }
+};

@@ -13,6 +13,7 @@ const MonitorView: React.FC = () => {
   const { isDark, toggleTheme } = useDarkMode();
   const [selectedStock, setSelectedStock] = useState<StockData | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const handleFilterClick = (filter: FilterType) => {
     setFilter(filter);
@@ -26,6 +27,16 @@ const MonitorView: React.FC = () => {
   const handleCloseModal = () => {
     setShowDetailModal(false);
     setSelectedStock(null);
+  };
+
+  const handleCopyCode = (code: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // 阻止触发卡片点击
+    navigator.clipboard.writeText(code).then(() => {
+      setCopiedCode(code);
+      setTimeout(() => setCopiedCode(null), 2000); // 2秒后清除提示
+    }).catch((err) => {
+      console.error('复制失败:', err);
+    });
   };
   return (
     <div className="pb-24">
@@ -223,7 +234,20 @@ const MonitorView: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-slate-700 dark:text-slate-200 font-mono text-sm font-semibold">{stock.code}</span>
+                    <button
+                      onClick={(e) => handleCopyCode(stock.code, e)}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors group"
+                      title="点击复制代码"
+                    >
+                      <span className="text-slate-700 dark:text-slate-200 font-mono text-sm font-semibold">{stock.code}</span>
+                      <span className={`material-symbols-outlined text-[14px] transition-all ${
+                        copiedCode === stock.code
+                          ? 'text-emerald-500'
+                          : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                      }`}>
+                        {copiedCode === stock.code ? 'check' : 'content_copy'}
+                      </span>
+                    </button>
                     <div className="flex w-fit items-center rounded bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5">
                       <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
                         {stock.exchange === 'SZ' ? '深 SZ' : '沪 SH'}

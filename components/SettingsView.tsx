@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import CacheManager from './CacheManager';
+import AccountManagementModal from './AccountManagementModal';
 
 interface SettingItem {
   id: string;
@@ -12,6 +13,7 @@ interface SettingItem {
 }
 
 const SettingsView: React.FC = () => {
+  const [showAccountModal, setShowAccountModal] = useState(false);
   const [settings, setSettings] = useState<SettingItem[]>([
     {
       id: 'notifications',
@@ -120,6 +122,28 @@ const SettingsView: React.FC = () => {
 
           {/* Data Management */}
           <section>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 px-1">账户管理</h3>
+
+            {/* 交易账户管理 */}
+            <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-700">
+              <button
+                onClick={() => setShowAccountModal(true)}
+                className="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-primary">account_balance</span>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white">交易账户</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">管理券商账户和费率</p>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-slate-400 dark:text-slate-500">chevron_right</span>
+              </button>
+            </div>
+          </section>
+
+          {/* Data Management */}
+          <section>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 px-1">数据管理</h3>
 
             {/* 缓存管理器 */}
@@ -166,6 +190,11 @@ const SettingsView: React.FC = () => {
           </button>
         </div>
       </main>
+
+      {/* 账户管理弹窗 */}
+      {showAccountModal && (
+        <AccountManagementModal onClose={() => setShowAccountModal(false)} />
+      )}
     </div>
   );
 };
